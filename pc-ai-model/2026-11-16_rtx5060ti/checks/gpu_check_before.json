@@ -1,0 +1,60 @@
+{
+ "nvidia_smi": {
+  "name": "NVIDIA GeForce RTX 5060 Ti",
+  "driver_version": "621.24",
+  "memory.total": "16311 MiB",
+  "pcie.link.gen.current": "2",
+  "pcie.link.gen.max": "4",
+  "pcie.link.width.current": "8",
+  "pcie.link.width.max": "8",
+  "power.limit": "180.00 W",
+  "power.max_limit": "180.00 W",
+  "temperature.gpu": "40.53",
+  "clocks.max.graphics": "3090 MHz",
+  "bar1_lines": [
+   "Total                                          : 256 MiB"
+  ],
+  "ok": true,
+  "secs": 0.2
+ },
+ "torch": {
+  "ok": true,
+  "version": "2.14.0+cu130",
+  "cuda": "13.0",
+  "device": "NVIDIA GeForce RTX 5060 Ti",
+  "capability": "sm_120",
+  "vram_gb": 15.9,
+  "arch_list": [
+   "sm_75",
+   "sm_80",
+   "sm_86",
+   "sm_90",
+   "sm_100",
+   "sm_120"
+  ],
+  "secs": 2.2
+ },
+ "matmul_bench": {
+  "ok": true,
+  "bf16_tflops": 48.9,
+  "secs": 13.1
+ },
+ "triton": {
+  "ok": false,
+  "error": "ModuleNotFoundError: No module named 'triton'",
+  "trace": "Traceback (most recent call last):\n  File \"C:\\AI model\\autopilot\\scripts\\gpu_selftest.py\", line 12, in deco\n    R[name] = fn()\n              ^^^^\n  File \"C:\\AI model\\autopilot\\scripts\\gpu_selftest.py\", line 60, in _\n    import triton, triton.language as tl, torch\nModuleNotFoundError: No module named 'triton'\n",
+  "secs": 0.0
+ },
+ "torch_compile": {
+  "ok": false,
+  "error": "TritonMissing: Cannot find a working triton installation. Either the package is not installed or it is too old. More information on installing Triton can be found at: https://github.com/triton-lang/triton\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n",
+  "trace": "Traceback (most recent call last):\n  File \"C:\\AI model\\autopilot\\scripts\\gpu_selftest.py\", line 12, in deco\n    R[name] = fn()\n              ^^^^\n  File \"C:\\AI model\\autopilot\\scripts\\gpu_selftest.py\", line 76, in _\n    return {\"ok\": bool(torch.allclose(f(t), torch.nn.functional.gelu(t) * 2 + 1, atol=1e-4))}\n                                      ^^^^\n  File \"C:\\AI model\\venv\\Lib\\site-packages\\torch\\_dynamo\\eval_frame.py\", line 1278, in compile_wrapper\n    raise e.remove_dynamo_frames() from None  # see TORCHDYNAMO_VERBOSE=1\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\AI model\\venv\\Lib\\site-packages\\torch\\_inductor\\scheduler.py\", line 9312, in create_backend\n    raise TritonMissing(inspect.currentframe())\ntorch._inductor.exc.TritonMissing: Cannot find a working triton installation. Either the package is not installed or it is too old. More information on installing Triton can be found at: https://github.com/triton-lang/triton\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n\n",
+  "secs": 19.0
+ },
+ "sageattention": {
+  "ok": false,
+  "error": "ModuleNotFoundError: No module named 'sageattention'",
+  "trace": "Traceback (most recent call last):\n  File \"C:\\AI model\\autopilot\\scripts\\gpu_selftest.py\", line 12, in deco\n    R[name] = fn()\n              ^^^^\n  File \"C:\\AI model\\autopilot\\scripts\\gpu_selftest.py\", line 82, in _\n    from sageattention import sageattn\nModuleNotFoundError: No module named 'sageattention'\n",
+  "secs": 0.0
+ }
+}

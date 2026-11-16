@@ -1,0 +1,26 @@
+{
+ "allowed_roots": [
+  "C:\\AI model",
+  "C:\\Users\\user\\Videos"
+ ],
+ "blender_exe": "C:\\Users\\user\\Documents\\Codex\\2026-09-27\\petit-brush-blender-model\\work\\blender-portable\\blender-5.2.2-windows-x64\\blender.exe",
+ "comfy_url": "http://127.0.0.1:8188",
+ "comfy_dir": "C:\\AI model\\ComfyUI",
+ "comfy_start_bat": "C:\\AI model\\start_comfyui.bat",
+ "auto_start_comfyui": true,
+ "h3_models": {
+  "unet": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+  "lora": "minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors",
+  "clip": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+  "video_vae": "minimax_h3_video_vae_int8_convrot.safetensors",
+  "audio_vae": "minimax_h3_audio_vae_fp32.safetensors",
+  "controlnet": "minimax_h3_fun_controlnet_union_2.0_pruned_int8_convrot.safetensors"
+ },
+ "pip_allowlist": [
+  "faster-whisper",
+  "nvidia-cublas-cu12",
+  "nvidia-cudnn-cu12",
+  "triton-windows",
+  "https://github.com/woct0rdho/SageAttention/releases/download/v2.2.0-windows.post6/sageattention-2.2.0+cu130torch2.10.0andhigher.post6-cp310-abi3-win_amd64.whl"
+ ]
+}

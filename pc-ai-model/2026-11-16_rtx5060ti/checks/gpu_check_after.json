@@ -1,0 +1,60 @@
+{
+ "nvidia_smi": {
+  "name": "NVIDIA GeForce RTX 5060 Ti",
+  "driver_version": "621.24",
+  "memory.total": "16311 MiB",
+  "pcie.link.gen.current": "2",
+  "pcie.link.gen.max": "4",
+  "pcie.link.width.current": "8",
+  "pcie.link.width.max": "8",
+  "power.limit": "180.00 W",
+  "power.max_limit": "180.00 W",
+  "temperature.gpu": "40.34",
+  "clocks.max.graphics": "3090 MHz",
+  "bar1_lines": [
+   "Total                                          : 256 MiB"
+  ],
+  "ok": true,
+  "secs": 0.2
+ },
+ "torch": {
+  "ok": true,
+  "version": "2.14.0+cu130",
+  "cuda": "13.0",
+  "device": "NVIDIA GeForce RTX 5060 Ti",
+  "capability": "sm_120",
+  "vram_gb": 15.9,
+  "arch_list": [
+   "sm_75",
+   "sm_80",
+   "sm_86",
+   "sm_90",
+   "sm_100",
+   "sm_120"
+  ],
+  "secs": 1.8
+ },
+ "matmul_bench": {
+  "ok": true,
+  "bf16_tflops": 49.4,
+  "secs": 1.1
+ },
+ "triton": {
+  "ok": true,
+  "version": "3.8.0",
+  "secs": 9.1
+ },
+ "torch_compile": {
+  "ok": true,
+  "secs": 4.9
+ },
+ "sageattention": {
+  "ok": true,
+  "version": "2.2.0+cu130torch2.10.0andhigher.post6",
+  "mean_rel_err": 0.0386,
+  "sdpa_ms": 22.12,
+  "sage_ms": 4.09,
+  "speedup": 5.41,
+  "secs": 3.0
+ }
+}
