@@ -1,0 +1,52 @@
+{
+ "file": "C:\\AI model\\ComfyUI\\models\\diffusion_models\\minimax_h3_image_pruned_int8_convrot.safetensors",
+ "n_tensors": 978,
+ "metadata_keys": [
+  "config"
+ ],
+ "metadata_small": {
+  "config": "{\"transformer\": {\"pdd_steps\": 6, \"pdd_sigmas\": [1.0, 0.9675236940383911, 0.8875485062599182, 0.75, 0.5327739119529724, 0.23200887441635132, 0.0]}}"
+ },
+ "quant_layers": [
+  {
+   "layer_kind": "fc1",
+   "conf": {
+    "convrot": true,
+    "convrot_groupsize": 256,
+    "format": "int8_tensorwise"
+   },
+   "count": 50,
+   "example": "blocks.0.mlp.fc1"
+  },
+  {
+   "layer_kind": "fc2",
+   "conf": {
+    "convrot": true,
+    "convrot_groupsize": 256,
+    "format": "int8_tensorwise"
+   },
+   "count": 50,
+   "example": "blocks.0.mlp.fc2"
+  },
+  {
+   "layer_kind": "out_proj",
+   "conf": {
+    "convrot": true,
+    "convrot_groupsize": 256,
+    "format": "int8_tensorwise"
+   },
+   "count": 50,
+   "example": "blocks.0.attn.out_proj"
+  },
+  {
+   "layer_kind": "qkv_proj",
+   "conf": {
+    "convrot": true,
+    "convrot_groupsize": 256,
+    "format": "int8_tensorwise"
+   },
+   "count": 50,
+   "example": "blocks.0.attn.qkv_proj"
+  }
+ ]
+}

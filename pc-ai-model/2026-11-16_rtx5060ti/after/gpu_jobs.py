@@ -9,6 +9,8 @@
 #       ComfyUI version (/system_stats) and the input spec of nodes whose class name matches a pattern.
 #   {"type": "comfy_history", "contains": ["q014_b1"]}
 #       read-only dump of /history entries whose prompt contains a substring.
+#   {"type": "quant_summary", "subdir": "diffusion_models", "filename": "x.safetensors"}
+#       read-only summary of per-layer quantization configs in a safetensors file.
 import hashlib, json, os, shutil, subprocess, sys, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -99,8 +101,40 @@ def h_comfy_history(ctx, j):
     return {"matched": len(hits), "total": len(hist)}
 
 
+def h_quant_summary(ctx, j):
+    # Read-only: summarize per-layer ComfyUI quantization configs (".comfy_quant" tensors) in a safetensors file.
+    import collections
+    from safetensors import safe_open
+    sub, fname = j["subdir"], j["filename"]
+    if "/" in fname or "\\" in fname or ".." in sub:
+        raise ValueError("bad name")
+    path = _R.safe_path(os.path.join(_R.CFG["comfy_dir"], "models", sub, fname))
+    counts = collections.Counter()
+    examples = {}
+    with safe_open(path, framework="pt") as f:
+        meta = f.metadata() or {}
+        keys = list(f.keys())
+        for k in keys:
+            if k.endswith("comfy_quant"):
+                conf = json.loads(bytes(f.get_tensor(k).numpy().tobytes()).decode("utf-8"))
+                layer = k[:-len(".comfy_quant")]
+                kind = layer.split(".")[-1] if not layer.split(".")[-1].isdigit() else layer
+                sig = json.dumps(conf, sort_keys=True)
+                counts[(kind, sig)] += 1
+                examples.setdefault((kind, sig), layer)
+    rows = [{"layer_kind": k, "conf": json.loads(s), "count": n, "example": examples[(k, s)]}
+            for (k, s), n in sorted(counts.items())]
+    out = {"file": path, "n_tensors": len(keys), "metadata_keys": sorted(meta.keys()),
+           "metadata_small": {k: v for k, v in meta.items() if len(v) < 2000}, "quant_layers": rows}
+    p = ctx.out("quant_summary.json")
+    json.dump(out, open(p, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    ctx.add(p)
+    return {"n_quant_layer_kinds": len(rows), "n_tensors": len(keys)}
+
+
 def register(runner):
     global _R
     _R = runner
     return {"gpu_check": h_gpu_check, "hf_download": h_hf_download, "comfy_info": h_comfy_info,
-            "comfy_history": h_comfy_history}
+            "comfy_history": h_comfy_history,
+            "quant_summary": h_quant_summary}
