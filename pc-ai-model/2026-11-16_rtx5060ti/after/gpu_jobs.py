@@ -7,6 +7,8 @@
 #       against the Hugging Face listing, never overwrites or deletes an existing different file.
 #   {"type": "comfy_info", "patterns": ["Sparse", "QwenImage21"]}
 #       ComfyUI version (/system_stats) and the input spec of nodes whose class name matches a pattern.
+#   {"type": "comfy_history", "contains": ["q014_b1"]}
+#       read-only dump of /history entries whose prompt contains a substring.
 import hashlib, json, os, shutil, subprocess, sys, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -80,7 +82,25 @@ def h_comfy_info(ctx, j):
     return {"comfyui_version": stats.get("system", {}).get("comfyui_version"), "matched_nodes": sorted(nodes)}
 
 
+def h_comfy_history(ctx, j):
+    # Read-only: dump ComfyUI /history entries whose prompt JSON contains any of the given substrings.
+    base = _R.CFG["comfy_url"]
+    hist = json.loads(_R.http(base + "/history?max_items=%d" % j.get("max_items", 300), timeout=120)[0])
+    subs = j.get("contains", [])
+    hits = {}
+    for pid, h in hist.items():
+        p = (h.get("prompt") or [None, None, {}])[2]
+        s = json.dumps(p, ensure_ascii=False)
+        if any(c in s for c in subs):
+            hits[pid] = {"prompt": p, "status": h.get("status"), "output_nodes": list((h.get("outputs") or {}).keys())}
+    path = ctx.out("comfy_history.json")
+    json.dump(hits, open(path, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    ctx.add(path)
+    return {"matched": len(hits), "total": len(hist)}
+
+
 def register(runner):
     global _R
     _R = runner
-    return {"gpu_check": h_gpu_check, "hf_download": h_hf_download, "comfy_info": h_comfy_info}
+    return {"gpu_check": h_gpu_check, "hf_download": h_hf_download, "comfy_info": h_comfy_info,
+            "comfy_history": h_comfy_history}
