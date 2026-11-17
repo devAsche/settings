@@ -1,0 +1,149 @@
+{
+ "prompt": {
+  "1": {
+   "class_type": "UNETLoader",
+   "inputs": {
+    "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+    "weight_dtype": "default"
+   }
+  },
+  "4": {
+   "class_type": "VAELoader",
+   "inputs": {
+    "vae_name": "minimax_h3_video_vae_int8_convrot.safetensors"
+   }
+  },
+  "5": {
+   "class_type": "VAELoader",
+   "inputs": {
+    "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+   }
+  },
+  "6": {
+   "class_type": "LoadVideo",
+   "inputs": {
+    "file": "opa_ref.mp4"
+   }
+  },
+  "7": {
+   "class_type": "GetVideoComponents",
+   "inputs": {
+    "video": [
+     "6",
+     0
+    ]
+   }
+  },
+  "8": {
+   "class_type": "LoadImage",
+   "inputs": {
+    "image": "r2v_rena_still.jpg"
+   }
+  },
+  "2": {
+   "class_type": "MiniMaxH3SigmaShift",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "shift_video": 12.0,
+    "shift_audio": 3.0
+   }
+  },
+  "9": {
+   "class_type": "MiniMaxH3CLIPCachedRef2VA",
+   "inputs": {
+    "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+    "vae": [
+     "4",
+     0
+    ],
+    "audio_vae": [
+     "5",
+     0
+    ],
+    "prompt": "Create a new video of the woman shown in the reference image, performing the exact same routine as the woman in the reference video, in time with the reference audio. She is the woman from the reference image: long black hair with soft waves at the ends, sharp cat-like eyes with a small mole under her left eye, a cream knit off-shoulder top, extremely large, heavy and prominent bust, narrow waist. Setting: a handheld selfie video at home in front of a plain warm beige wall with soft warm lamplight on one side, very close bust-up framing, the top of her head slightly cropped out of frame, the camera tilted a few degrees off level. Motion: copy the reference video faithfully. She starts calm and almost still, then she bounces and hops vertically in place on the beat, her whole upper body popping up and down with sharp, energetic, purely vertical movement, bigger and wilder hops than a gentle bounce, her long black hair  flying up and outward on every hop and falling back as she lands, her chest bouncing strongly with each hop. The handheld camera pushes in close to her face in the middle of the video and pulls back again, and the framing shakes and drifts playfully with the bouncing, just like the reference video. She keeps a gentle relaxed gaze into the camera the whole time and finishes close to the camera with a soft smile. All motion is vertical and snappy with brief still moments between hops. She never sways her hips, never wiggles her waist side to side, no slow drifting, no slow motion. Her mole stays in the same place, the wall behind her stays the same, realistic amateur smartphone video, warm indoor lamplight, deep focus, no bokeh.",
+    "width": 768,
+    "height": 960,
+    "length": 216,
+    "ref_image_size": "match",
+    "ref_image_0": [
+     "8",
+     0
+    ],
+    "ref_video_0": [
+     "7",
+     0
+    ],
+    "ref_video_audio_0": [
+     "7",
+     1
+    ],
+    "cache_mode": "auto"
+   }
+  },
+  "10": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "2",
+     0
+    ],
+    "seed": 172632742,
+    "steps": 1,
+    "cfg": 1.0,
+    "sampler_name": "euler",
+    "scheduler": "simple",
+    "positive": [
+     "9",
+     0
+    ],
+    "negative": [
+     "9",
+     0
+    ],
+    "latent_image": [
+     "9",
+     1
+    ],
+    "denoise": 1.0
+   }
+  },
+  "11": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "10",
+     0
+    ],
+    "vae": [
+     "4",
+     0
+    ]
+   }
+  },
+  "12": {
+   "class_type": "CreateVideo",
+   "inputs": {
+    "images": [
+     "11",
+     0
+    ],
+    "fps": 24.0
+   }
+  },
+  "13": {
+   "class_type": "SaveVideo",
+   "inputs": {
+    "video": [
+     "12",
+     0
+    ],
+    "filename_prefix": "q020_d1_clipcached",
+    "format": "mp4",
+    "codec": "h264"
+   }
+  }
+ }
+}
