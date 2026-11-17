@@ -55,6 +55,34 @@ def _():
     return {"ok": True, "bf16_tflops": round(2 * 8192**3 / dt / 1e12, 1)}
 
 
+@sec("pcie_bandwidth")
+def _():
+    # Host->GPU copy speed (what weight offloading/streaming depends on) and the PCIe link while copying.
+    import torch, threading
+    n = 256 * 2**20
+    dst = torch.empty(n, dtype=torch.uint8, device="cuda")
+    res, links = {}, []
+
+    def watch(stop):
+        while not stop.is_set():
+            o = subprocess.run(["nvidia-smi", "--query-gpu=pcie.link.gen.current,pcie.link.width.current",
+                                "--format=csv,noheader"], capture_output=True, timeout=10)
+            links.append(o.stdout.decode().strip()); time.sleep(0.3)
+    for kind in ("pinned", "pageable"):
+        src = torch.empty(n, dtype=torch.uint8, pin_memory=(kind == "pinned"))
+        dst.copy_(src, non_blocking=True); torch.cuda.synchronize()
+        stop = threading.Event(); th = threading.Thread(target=watch, args=(stop,)); th.start()
+        t0 = time.time(); k = 0
+        while time.time() - t0 < 3:
+            dst.copy_(src, non_blocking=True); k += 1
+        torch.cuda.synchronize(); dt = time.time() - t0
+        stop.set(); th.join()
+        res[f"{kind}_GBps"] = round(k * n / dt / 1e9, 2)
+    res["link_during_copy"] = sorted(set(links))
+    res["ok"] = True
+    return res
+
+
 @sec("triton")
 def _():
     import triton, triton.language as tl, torch
